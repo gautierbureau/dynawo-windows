@@ -14,8 +14,16 @@ jobs:
       - name: Build
         shell: cmd
         run: |
-          cd dynawo
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cmake -S dynawo/3rdParty -B b-3-p -DCMAKE_INSTALL_PREFIX=../d-3-p -DOPENMODELICA_INSTALL=../OpenModelica/Install -DOPENMODELICA_SRC=../OpenModelica/Source -DOMDEV_HOME=../OMDev -G "NMake Makefiles"
+          choco install wget --no-progress
+          wget -nv https://github.com/gautierbureau/dynawo-windows/releases/download/test/Install.zip
+          7z x Install.zip
+          cd dynawo
+          cmake -S dynawo/3rdParty -B b-3-p -DCMAKE_INSTALL_PREFIX=../d-3-p -DOPENMODELICA_INSTALL=../Install -DOPENMODELICA_SRC=../OpenModelica/Source -DOMDEV_HOME=../OMDev -G "NMake Makefiles"
           cmake --build b-3-p --target omdev
           cmake --build b-3-p --target openmodelica
+          cmake --build b-3-p
+          cmake -S dynawo -B b -DCMAKE_INSTALL_PREFIX=../d-i -DDYNAWO_HOME=.. -DINSTALL_OPENMODELICA=../../Install -DDYNAWO_THIRD_PARTY_DIR=../../d-3-p -G "NMake Makefiles
+          cmake --build b --target install
+          cmake --build b --target models
+          cmake --build b --target solvers
