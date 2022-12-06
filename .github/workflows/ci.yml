@@ -19,6 +19,7 @@ jobs:
       - name: Install OpenModelica
         shell: cmd
         run: |
+          cd \
           wget -nv https://github.com/gautierbureau/dynawo-windows/releases/download/test/OpenModelica.zip
           7z x OpenModelica.zip
 
