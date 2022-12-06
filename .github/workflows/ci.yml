@@ -7,23 +7,40 @@ jobs:
     runs-on: windows-2019
     env:
       DYNAWO_BUILD_TYPE: Release
+      BOOST_ROOT: C:\thirdparties\boost-1.71.0
+      BOOST_URL: https://sourceforge.net/projects/boost/files/boost-binaries/1.71.0/boost_1_71_0-msvc-14.2-64.exe/download
     steps:
       - name: Git clone
         shell: cmd
         run: git config --global core.autocrlf input & git config --global core.eol lf & git clone https://github.com/dynawo/dynawo.git
-      - name: Build
+
+      - name: Install wget
+        shell: cmd
+        run: choco install wget
+
+      - name: Install OpenModelica
+        shell: cmd
+        run: |
+          wget https://github.com/gautierbureau/dynawo-windows/releases/download/test/OpenModelica.zip
+          7z x OpenModelica.zip
+
+      - name: Install Boost
+        shell: cmd
+        run: |
+          wget -O boost-installer.exe %BOOST_URL%
+          boost-installer.exe /dir=%BOOST_ROOT% /sp- /verysilent /suppressmsgboxes /norestart
+
+      - name: Build Dynawo
         shell: cmd
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          choco install wget --no-progress
-          wget -nv https://github.com/gautierbureau/dynawo-windows/releases/download/test/Install.zip
-          7z x Install.zip
           cd dynawo
-          cmake -S dynawo/3rdParty -B b-3-p -DCMAKE_INSTALL_PREFIX=../d-3-p -DOPENMODELICA_INSTALL=../Install -DOPENMODELICA_SRC=../OpenModelica/Source -DOMDEV_HOME=../OMDev -G "NMake Makefiles"
+          cmake -S dynawo/3rdParty -B b-3-p -DCMAKE_INSTALL_PREFIX=../d-3-p -DOPENMODELICA_INSTALL=../OpenModelica -DOPENMODELICA_SRC=../OpenModelica/Source -DOMDEV_HOME=../OMDev -DBOOST_ROOT=%BOOST_ROOT% -G "NMake Makefiles"
           cmake --build b-3-p --target omdev
           cmake --build b-3-p --target openmodelica
           cmake --build b-3-p
-          cmake -S dynawo -B b -DCMAKE_INSTALL_PREFIX=../d-i -DDYNAWO_HOME=.. -DINSTALL_OPENMODELICA=../../Install -DDYNAWO_THIRD_PARTY_DIR=../../d-3-p -G "NMake Makefiles
+          xcopy %BOOST_ROOT% ..\d-3-p\boost /E /i
+          cmake -S dynawo -B b -DCMAKE_INSTALL_PREFIX=../d-i -DDYNAWO_HOME=.. -DINSTALL_OPENMODELICA=../../OpenModelica -DDYNAWO_THIRD_PARTY_DIR=../../d-3-p -G "NMake Makefiles"
           cmake --build b --target install
           cmake --build b --target models
           cmake --build b --target solvers
