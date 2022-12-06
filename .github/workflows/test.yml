@@ -1,4 +1,4 @@
-name: CI
+name: curl
 
 on: [push, pull_request]
 
@@ -11,3 +11,11 @@ jobs:
         run: |
           choco install curl --no-progress
           curl --help
+          cd
+
+      - name: Test bash
+        shell: bash
+        run: |
+         url=$(curl -s --request GET https://api.github.com/repos/gautierbureau/dynawo-windows/releases/latest | grep upload_url | cut -d '"' -f 4 | grep -o ".*assets")
+         echo $url
+         pwd

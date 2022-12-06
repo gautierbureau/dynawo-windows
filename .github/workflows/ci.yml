@@ -12,7 +12,7 @@ jobs:
 
       - name: Install wget
         shell: cmd
-        run: choco install wget --no-progress
+        run: choco install wget curl --no-progress
 
       - name: Install OpenModelica
         shell: cmd
