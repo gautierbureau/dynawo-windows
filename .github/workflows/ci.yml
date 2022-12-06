@@ -8,7 +8,9 @@ jobs:
     steps:
       - name: Git clone
         shell: cmd
-        run: git config --global core.autocrlf input & git config --global core.eol lf & git clone https://github.com/dynawo/dynawo.git
+        run: |
+          cd \
+          git config --global core.autocrlf input & git config --global core.eol lf & git clone https://github.com/dynawo/dynawo.git
 
       - name: Install wget
         shell: cmd
@@ -20,15 +22,34 @@ jobs:
           wget -nv https://github.com/gautierbureau/dynawo-windows/releases/download/test/OpenModelica.zip
           7z x OpenModelica.zip
 
-      - name: Build Dynawo
+      - name: Build Dynawo Third Parties
         shell: cmd
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cd dynawo
+          cd \dynawo
           cmake -S dynawo/3rdParty -B b-3-p -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../d-3-p -DOPENMODELICA_INSTALL=../OpenModelica -DOPENMODELICA_SRC=../OpenModelica/Source -DOMDEV_HOME=../OMDev -G "NMake Makefiles"
           cmake --build b-3-p --target omdev
           cmake --build b-3-p --target openmodelica
           cmake --build b-3-p
+          cd ..
+          ren d-3-p dynawo-3rd-parties-windows
+          7z a dynawo-3rd-parties-windows.zip -r dynawo-3rd-parties-windows\*
+          ren dynawo-3rd-parties-windows d-3-p
+
+      - name: Upload 3rd Parties
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+         url=$(curl -s --request GET https://api.github.com/repos/gautierbureau/dynawo-windows/releases/latest | grep upload_url | cut -d '"' -f 4 | grep -o ".*assets")
+         cd /
+         curl -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" -X POST ${url}?name=dynawo-3rd-parties-windows.zip --data-binary @dynawo-3rd-parties-windows.zip
+
+      - name: Build Dynawo
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cd \dynawo
           cmake -S dynawo -B b -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../d-i -DDYNAWO_HOME=.. -DINSTALL_OPENMODELICA=../../OpenModelica -DDYNAWO_THIRD_PARTY_DIR=../../d-3-p -G "NMake Makefiles"
           cmake --build b --target install
           cmake --build b --target models
