@@ -1,0 +1,27 @@
+name: Windows 3rd Parties
+
+on:
+  workflow_call
+
+jobs:
+  windows-3rd-parties:
+    runs-on: windows-2019
+    steps:
+      - name: Install tools
+        shell: cmd
+        run: choco install wget curl jq --no-progress
+
+      - name: Install OpenModelica and Third Parties
+        shell: cmd
+        run: |
+          wget -nv https://github.com/gautierbureau/dynawo-windows/releases/download/test/OpenModelica.zip
+          7z x OpenModelica.zip
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "windows-3rd-parties"
+          prerelease: true
+          title: "Windows 3rd Parties"
+          files: |
+            OpenModelica.zip
