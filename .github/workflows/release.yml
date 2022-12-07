@@ -36,6 +36,13 @@ jobs:
           cd ..
           ren d-3-p dynawo-3rd-parties-windows
           7z a dynawo-3rd-parties-windows.zip -r dynawo-3rd-parties-windows\*
+          
+      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          delete_release: true
+          tag_name: windows-3rd-parties
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
