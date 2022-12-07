@@ -1,21 +1,27 @@
 name: curl
 
-on: pull_request
+on: push
 
 jobs:
   build-windows:
     runs-on: windows-2019
     steps:
-      - name: Install curl
+      # - name: Install curl
+      #   shell: cmd
+      #   run: |
+      #     choco install curl --no-progress
+      #     curl --help
+      #
+      # - name: Test bash
+      #   shell: bash
+      #   run: |
+      #    url=$(curl -s --request GET https://api.github.com/repos/gautierbureau/dynawo-windows/releases/latest | grep upload_url | cut -d '"' -f 4 | grep -o ".*assets")
+      #    echo $url
+      #    pwd
+
+      - name: Move git
         shell: cmd
         run: |
-          choco install curl --no-progress
-          curl --help
-          cd
-
-      - name: Test bash
-        shell: bash
-        run: |
-         url=$(curl -s --request GET https://api.github.com/repos/gautierbureau/dynawo-windows/releases/latest | grep upload_url | cut -d '"' -f 4 | grep -o ".*assets")
-         echo $url
-         pwd
+          cd ..
+          dir
+          mv dynawo \
