@@ -38,6 +38,13 @@ jobs:
       #     ren d-3-p dynawo-3rd-parties-windows
       #     7z a dynawo-3rd-parties-windows.zip -r dynawo-3rd-parties-windows\*
 
+    - name: Move zips
+      shell: cmd
+      run: |
+        mv D:\OpenModelica.zip OpenModelica.zip
+        mv D:\dynawo-3rd-parties-windows.zip dynawo-3rd-parties-windows.zip
+        dir
+
       - uses: dev-drprasad/delete-tag-and-release@v0.2.0
         with:
           delete_release: true
@@ -52,6 +59,7 @@ jobs:
           prerelease: true
           title: "Windows 3rd Parties"
           files: |
-            \OpenModelica.zip
+            OpenModelica.zip
+            dynawo-3rd-parties-windows.zip
 
 # \dynawo-3rd-parties-windows.zip
