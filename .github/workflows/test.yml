@@ -29,6 +29,7 @@ jobs:
           cd ..
           dir
           mv dynawo-windows \
+          md dynawo-windows
           cd \
           dir
           cd
