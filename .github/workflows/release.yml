@@ -11,12 +11,6 @@ jobs:
         shell: cmd
         run: choco install wget curl jq --no-progress
 
-      - name: Git clone
-        shell: cmd
-        run: |
-          cd \
-          git config --global core.autocrlf input & git config --global core.eol lf & git clone https://github.com/dynawo/dynawo.git
-
       - name: Install OpenModelica
         shell: cmd
         run: |
@@ -36,7 +30,7 @@ jobs:
          ls
          echo $url
          ls OpenModelica/dynawo/OpenModelica.zip
-         curl --retry 20 --retry-delay 0 --retry-max-time 40 --max-time 180 --limit-rate 5M -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" -X POST ${url}?name=OpenModelica-windows.zip --data-binary @OpenModelica/dynawo/OpenModelica.zip
+         curl --retry 20 --retry-delay 0 --retry-max-time 40 --max-time 3600 --limit-rate 200K -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" -X POST ${url}?name=OpenModelica-windows.zip --data-binary @OpenModelica/dynawo/OpenModelica.zip
 
       # - name: Build Dynawo Third Parties
       #   shell: cmd
