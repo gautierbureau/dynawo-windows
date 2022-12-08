@@ -30,7 +30,7 @@ jobs:
          ls
          echo $url
          ls OpenModelica/dynawo/OpenModelica.zip
-         curl --retry 20 --retry-delay 0 --retry-max-time 40 --max-time 3600 --limit-rate 200K -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" -X POST ${url}?name=OpenModelica-windows.zip --data-binary @OpenModelica/dynawo/OpenModelica.zip
+         curl -vvv --retry 20 --retry-delay 0 --retry-max-time 40 --max-time 3600 --limit-rate 200K -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/zip" -X POST ${url}?name=OpenModelica-windows.zip --data-binary @OpenModelica/dynawo/OpenModelica.zip
 
       # - name: Build Dynawo Third Parties
       #   shell: cmd
