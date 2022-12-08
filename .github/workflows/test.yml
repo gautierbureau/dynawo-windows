@@ -6,11 +6,11 @@ jobs:
   build-windows:
     runs-on: windows-2019
     steps:
-      # - name: Install curl
-      #   shell: cmd
-      #   run: |
-      #     choco install curl --no-progress
-      #     curl --help
+      - name: Install curl
+        shell: cmd
+        run: |
+          choco install curl jq --no-progress
+          curl --help
 
       # - name: Test bash
       #   shell: bash
@@ -35,3 +35,9 @@ jobs:
           cd
           cd dynawo-windows
           dir
+
+      - name: Test
+        shell: bash
+        run: |
+          url=$(curl -s https://api.github.com/repos/dynawo/dynawo/releases/tags/nightly | jq -r '.assets_url')
+          echo $url
