@@ -18,6 +18,8 @@ jobs:
       #    url=$(curl -s --request GET https://api.github.com/repos/gautierbureau/dynawo-windows/releases/latest | grep upload_url | cut -d '"' -f 4 | grep -o ".*assets")
       #    echo $url
       #    pwd
+      - name: Checkout sources
+        uses: actions/checkout@v3
 
       - name: Move git
         shell: cmd
